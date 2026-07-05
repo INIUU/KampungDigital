@@ -22,24 +22,26 @@ class KkSeeder extends Seeder
             return;
         }
 
-        foreach (range(1, 20) as $i) {
-            DB::table('kks')->insert([
-                'no_kk' => $this->generateNoKk($i),
-                'rt_id' => $rtIds->random(),
-                'alamat' => 'Jalan Contoh No. ' . $i,
-                'status' => collect(['aktif', 'tidak_aktif'])->random(),
-                'tanggal_dibuat' => Carbon::now()->subDays(rand(0, 365)),
-                'keterangan' => rand(0, 1) ? 'Keluarga baru pindahan.' : null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        foreach ($rtIds as $rtId) {
+            $kkCount = rand(4, 7);
+            for ($i = 0; $i < $kkCount; $i++) {
+                DB::table('kks')->insert([
+                    'no_kk' => $this->generateNoKk($rtId, $i),
+                    'rt_id' => $rtId,
+                    'alamat' => 'Jalan RT ' . $rtId . ' No. ' . rand(1, 120),
+                    'status' => 'aktif',
+                    'tanggal_dibuat' => Carbon::now()->subDays(rand(0, 730)),
+                    'keterangan' => rand(0, 1) ? 'Keluarga baru pindahan.' : null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 
-    private function generateNoKk($i): string
+    private function generateNoKk($rtId, $index): string
     {
-        // Contoh: 327312150399XXXX (acak 4 digit di akhir)
-        $base = '327312' . date('dmy', strtotime('1999-03-15'));
-        return $base . str_pad($i, 4, '0', STR_PAD_LEFT); // max 9999 entry
+        $prefix = '327312' . str_pad($rtId, 3, '0', STR_PAD_LEFT);
+        return $prefix . str_pad($index + 1, 5, '0', STR_PAD_LEFT);
     }
 }

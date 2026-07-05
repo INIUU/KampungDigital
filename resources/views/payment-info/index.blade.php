@@ -481,6 +481,7 @@ showNotification(type, message) {
 async fetchPaymentInfos() {
     try {
         const response = await fetch('/api/payment-info', {
+            credentials: 'same-origin',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -666,7 +667,9 @@ async submitForm() {
     try {
         const response = await fetch(url, {
             method: method,
+            credentials: 'same-origin',
             headers: {
+                'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: formData,
@@ -697,6 +700,7 @@ async deletePaymentInfo(id) {
     try {
         const response = await fetch(`/api/payment-info/${id}`, {
             method: 'POST', // Laravel uses POST for DELETE with _method field
+            credentials: 'same-origin',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'X-Requested-With': 'XMLHttpRequest',

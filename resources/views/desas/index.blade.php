@@ -309,7 +309,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($desas as $index => $desa)
+                        @foreach($desas as $index => $desa)
                         <tr>
                             <td class="font-medium text-center">{{ $index + 1 }}</td>
                             <td>
@@ -368,24 +368,23 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="11" class="py-12 text-center">
-                                <div class="flex flex-col items-center">
-                                    <i data-lucide="building-2" class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4"></i>
-                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Belum ada data desa</h3>
-                                    <p class="text-gray-500 dark:text-gray-400 mb-4">Mulai dengan menambahkan desa pertama Anda.</p>
-                                    <a href="{{ route('desas.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200">
-                                        <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                                        Tambah Desa
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
+                @if($desas->isEmpty())
+                    <div class="py-12 text-center">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="building-2" class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Belum ada data desa</h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">Mulai dengan menambahkan desa pertama Anda.</p>
+                            <a href="{{ route('desas.create') }}" 
+                               class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200">
+                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                                Tambah Desa
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 

@@ -2,29 +2,43 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        // User::factory(10)->create();
+  /**
+   * Seed the application's database.
+   */
+  public function run(): void
+  {
+    // Import wilayah Indonesia SQL dump (MySQL dump)
+    DB::unprepared(file_get_contents(database_path('seeders/wilayah_indonesia.sql')));
 
+    // Core seeders - order matters due to foreign keys and dependencies
+    $this->call([
+      // Location and administrative data
+      DesaSeeder::class,
+      RwSeeder::class,
+      RtSeeder::class,
+      KkSeeder::class,
+      PendudukSeeder::class,
 
-      //  User::factory()->create([
-       //     'name' => 'admin',
-         //   'email' => 'admin@gmail.com',
-           // 'password'=> bcrypt('123456789'),
-            // 'role' => 'admin',
-                // 'status' => 'active',
-       // ]);
-      DB::unprepared(file_get_contents(database_path('seeders/wilayah_indonesia.sql')));
+      // Create users per role and assign leadership/penduduk links
+      AdminSeeder::class,
+      KadesSeeder::class,
+      RwUserSeeder::class,
+      RtUserSeeder::class,
+      MasyarakatSeeder::class,
 
-    }
+      // System settings and payment info
+      PengaturanKasSeeder::class,
+      PaymentInfoSeeder::class,
+      KasSeeder::class,
+
+      // Other application data
+      BantuanProposalSeeder::class,
+      NotifikasiSeeder::class,
+    ]);
+  }
 }

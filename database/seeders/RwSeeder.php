@@ -22,11 +22,11 @@ class RwSeeder extends Seeder
                 $data[] = [
                     'desa_id' => $desaId,
                     'nama_rw' => 'RW 00' . $i,
-                    'alamat' => $faker->address,
-                    'no_telpon' => $faker->optional()->numberBetween(1000000000, 2147483647),
-                    'saldo' => $faker->randomFloat(2, 0, 10000000),
-                    'status' => $faker->randomElement(['aktif', 'tidak_aktif']),
-                    'ketua_rw' => $faker->optional()->name,
+                    'no_rw' => $i,
+                    'alamat' => $faker->streetAddress,
+                    'no_telpon' => $faker->optional()->phoneNumber,
+                    'saldo' => $faker->randomFloat(2, 100000, 10000000),
+                    'status' => 'aktif',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

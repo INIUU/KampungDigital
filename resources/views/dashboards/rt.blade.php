@@ -497,16 +497,27 @@ function rtDashboardData() {
           console.log('✅ RT Dashboard initialized successfully');
       },
 
+      getApiHeaders() {
+          const headers = {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          };
+
+          const authToken = localStorage.getItem('auth_token');
+          if (authToken) {
+              headers.Authorization = 'Bearer ' + authToken;
+          }
+
+          return headers;
+      },
+
       async loadDashboardData() {
           try {
               console.log('📊 Loading RT dashboard data...');
               const response = await fetch('/api/dashboard/stats', {
                   method: 'GET',
-                  headers: {
-                      'X-Requested-With': 'XMLHttpRequest',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  }
+                  credentials: 'same-origin',
+                  headers: this.getApiHeaders()
               });
               
               if (response.ok) {
@@ -543,13 +554,10 @@ function rtDashboardData() {
 
       async loadPaymentInfo() {
           try {
-              const response = await fetch('/api/payment-info/for-user-rt', { 
+              const response = await fetch('/api/payment-info/user-rt', {
                   method: 'GET',
-                  headers: {
-                      'X-Requested-With': 'XMLHttpRequest',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  }
+                  credentials: 'same-origin',
+                  headers: this.getApiHeaders()
               });
               
               if (response.ok) {
@@ -567,11 +575,8 @@ function rtDashboardData() {
           try {
               const response = await fetch('/api/saldo/history', {
                   method: 'GET',
-                  headers: {
-                      'X-Requested-With': 'XMLHttpRequest',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  }
+                  credentials: 'same-origin',
+                  headers: this.getApiHeaders()
               });
               
               if (response.ok) {
@@ -627,11 +632,10 @@ function rtDashboardData() {
           try {
               const response = await fetch('/api/saldo/transfer-kas', {
                   method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  },
+                  credentials: 'same-origin',
+                  headers: Object.assign({
+                      'Content-Type': 'application/json'
+                  }, this.getApiHeaders()),
                   body: JSON.stringify({
                       amount: this.transferForm.amount,
                       description: this.transferForm.description
@@ -665,11 +669,10 @@ function rtDashboardData() {
           try {
               const response = await fetch('/api/saldo/add-income', {
                   method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  },
+                  credentials: 'same-origin',
+                  headers: Object.assign({
+                      'Content-Type': 'application/json'
+                  }, this.getApiHeaders()),
                   body: JSON.stringify({
                       amount: this.incomeForm.amount,
                       description: this.incomeForm.description
@@ -703,11 +706,10 @@ function rtDashboardData() {
           try {
               const response = await fetch('/api/saldo/add-expense', {
                   method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                  },
+                  credentials: 'same-origin',
+                  headers: Object.assign({
+                      'Content-Type': 'application/json'
+                  }, this.getApiHeaders()),
                   body: JSON.stringify({
                       amount: this.expenseForm.amount,
                       description: this.expenseForm.description

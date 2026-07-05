@@ -22,12 +22,12 @@ class RtSeeder extends Seeder
                 $data[] = [
                     'rw_id' => $rwId,
                     'nama_rt' => 'RT 00' . $i,
-                    'alamat' => $faker->address,
-                    'ketua_rt' => $faker->optional()->name,
-                    'no_telpon' => $faker->optional()->numberBetween(1000000000, 2147483647),
-                    'jumlah_kk' => $faker->numberBetween(10, 100),
-                    'saldo' => $faker->randomFloat(2, 0, 10000000),
-                    'status' => $faker->randomElement(['aktif', 'tidak_aktif']),
+                    'no_rt' => $i,
+                    'alamat' => $faker->streetAddress,
+                    'no_telpon' => $faker->optional()->phoneNumber,
+                    'jumlah_kk' => 0,
+                    'saldo' => $faker->randomFloat(2, 100000, 10000000),
+                    'status' => 'aktif',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

@@ -17,6 +17,13 @@ class KasSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get global pengaturan kas
+        $pengaturan = PengaturanKas::first();
+        if (!$pengaturan) {
+            $this->command->warn('Tidak ada pengaturan kas, seeder Kas dilewati.');
+            return;
+        }
+
         // Get all active penduduk with RT data
         $penduduks = Penduduk::whereHas('kk.rt', function($query) {
             $query->where('status', 'aktif');
@@ -27,40 +34,44 @@ class KasSeeder extends Seeder
 
         foreach ($penduduks as $penduduk) {
             $rt = $penduduk->kk->rt;
-            $pengaturan = PengaturanKas::where('rt_id', $rt->id)->first();
+            if (!$rt) {
+                continue;
+            }
 
-            if ($pengaturan) {
-                // Create kas for the last 4 weeks
-                for ($week = max(1, $currentWeek - 3); $week <= $currentWeek; $week++) {
-                    $dueDate = Carbon::now()->setISODate($currentYear, $week, 0); // Sunday of that week
-                    
-                    $status = 'belum_bayar';
-                    $tanggalBayar = null;
-                    $metodeBayar = null;
+            for ($week = max(1, $currentWeek - 3); $week <= $currentWeek; $week++) {
+                $dueDate = Carbon::now()->setISODate($currentYear, $week, 7)->startOfDay();
 
-                    // Randomly mark some as paid
-                    if ($week < $currentWeek && rand(1, 100) <= 70) { // 70% chance of being paid for past weeks
+                $status = 'belum_bayar';
+                $tanggalBayar = null;
+                $metodeBayar = null;
+                $denda = 0;
+                $jumlahDibayar = 0;
+
+                if ($week < $currentWeek) {
+                    if (rand(1, 100) <= 70) {
                         $status = 'lunas';
-                        $tanggalBayar = $dueDate->copy()->addDays(rand(0, 6));
-                        $metodeBayar = collect(['tunai', 'transfer', 'digital'])->random();
-                    } elseif ($week < $currentWeek && rand(1, 100) <= 20) { // 20% chance of being late
+                        $tanggalBayar = $dueDate->copy()->addDays(rand(0, 6))->setTime(rand(8, 20), rand(0, 59), 0);
+                        $metodeBayar = collect(['tunai', 'bank_transfer', 'e_wallet', 'qr_code'])->random();
+                        $jumlahDibayar = $pengaturan->jumlah_kas_mingguan;
+                    } else {
                         $status = 'terlambat';
+                        $denda = round($pengaturan->jumlah_kas_mingguan * ($pengaturan->persentase_denda / 100), 2);
                     }
-
-                    Kas::create([
-                        'penduduk_id' => $penduduk->id,
-                        'rt_id' => $rt->id,
-                        'rw_id' => $rt->rw_id,
-                        'minggu_ke' => $week,
-                        'tahun' => $currentYear,
-                        'jumlah' => $pengaturan->jumlah_per_minggu,
-                        'tanggal_jatuh_tempo' => $dueDate,
-                        'tanggal_bayar' => $tanggalBayar,
-                        'status' => $status,
-                        'metode_bayar' => $metodeBayar,
-                        'keterangan' => $status === 'lunas' ? 'Pembayaran rutin mingguan' : null,
-                    ]);
                 }
+
+                Kas::create([
+                    'penduduk_id' => $penduduk->id,
+                    'rt_id' => $rt->id,
+                    'minggu_ke' => $week,
+                    'tahun' => $currentYear,
+                    'jumlah' => $pengaturan->jumlah_kas_mingguan,
+                    'denda' => $denda,
+                    'tanggal_jatuh_tempo' => $dueDate->format('Y-m-d'),
+                    'tanggal_bayar' => $tanggalBayar,
+                    'status' => $status,
+                    'metode_bayar' => $metodeBayar,
+                    'jumlah_dibayar' => $jumlahDibayar,
+                ]);
             }
         }
     }

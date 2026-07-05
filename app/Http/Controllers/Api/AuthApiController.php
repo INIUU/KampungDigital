@@ -44,6 +44,14 @@ class AuthApiController extends Controller
               ]);
           }
 
+          // Check if masyarakat user has penduduk
+          if ($user->role === 'masyarakat' && !$user->penduduk) {
+              Auth::logout();
+              throw ValidationException::withMessages([
+                  'email' => ['Data kependudukan Anda tidak ditemukan. Silakan hubungi administrator.'],
+              ]);
+          }
+
           // Update last activity
           $user->update([
               'last_activity' => now(),
