@@ -1,0 +1,14 @@
+vendor/
+node_modules/
+.git
+.github
+.env
+.env.*
+storage/*.key
+storage/*.log
+storage/debugbar
+coverage/
+tests/
+docker/
+README.md
+.gitignore
