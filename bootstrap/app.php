@@ -81,6 +81,9 @@ return Application::configure(basePath: dirname(__DIR__))
           ->description('Update user online status')
           ->withoutOverlapping();
     })
+    ->withMiddleware(function ($middleware) {
+    $middleware->trustProxies(at: '*');
+})
     ->withExceptions(function (Exceptions $exceptions) {
         // Handle BadMethodCallException (missing methods)
         $exceptions->render(function (\BadMethodCallException $e, $request) {
